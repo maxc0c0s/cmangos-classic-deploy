@@ -4,4 +4,6 @@ RUN apt-get install -y build-essential gcc g++ automake git-core autoconf make p
 
 COPY entrypoint.sh /tmp
 
+ONBUILD COPY deploy.sh /tmp
+
 ENTRYPOINT ["/tmp/entrypoint.sh"]

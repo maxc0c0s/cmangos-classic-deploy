@@ -17,8 +17,19 @@ then
   echo 'You need to specify the $COMMIT_DB environment variable, which is the desired classicdb/database commit sha.'
   exit
 fi
+if [ -z $CMANGOS_VERSION ]
+then
+  echo 'You need to specify the $CMANGOS_VERSION environment variable, which is the cmangos/mangos-classic version'
+  exit
+fi
+DEPLOY_FILE="deploy.sh"
+if [ ! -f $BUILD_ROOT/$DEPLOY_FILE ]
+then
+  echo "$DEPLOY_FILE not found"
+  exit
+fi
 
-echo "TODO ******************Compiling*************************"
+echo "******************Compiling*************************"
 
 CMANGOS_DIR="$BUILD_ROOT/mangos-classic"
 cd $BUILD_ROOT
@@ -40,7 +51,7 @@ git reset --hard $COMMIT_DB
 cd $BUILD_ROOT
 
 BUILD_DIR="$BUILD_ROOT/build"
-BIN_DIR="$BUILD_ROOT/bin"
+BIN_DIR="$BUILD_ROOT/cmangos"
 mkdir -p $BUILD_DIR
 mkdir -p $BIN_DIR
 
@@ -50,13 +61,26 @@ make
 make install
 cd $BUILD_ROOT
 
-tar -cvzf cmangos-classic-0.18.48.tar.gz bin
-mkdir -p /tmp/configs
-cp mangos-classic/src/mangosd/mangosd.conf.dist.in configs/mangosd.conf
-cp mangos-classic/src/realmd/realmd.conf.dist.in configs/realmd.conf
-cp mangos-classic/src/game/AuctionHouseBot/ahbot.conf.dist.in configs/ahbot.conf
-tar -cvzf cmangos-classic-configs-0.18.48.tar.gz configs
+tar -cvzf cmangos-classic-${CMANGOS_VERSION}.tar.gz cmangos
+DATABASE_DIR="$BUILD_ROOT/database"
+mkdir -p $DATABASE_DIR
+cp -R $CMANGOS_DIR/sql $DATABASE_DIR/sql
+mv $CLASSIC_DB_DIR $DATABASE_DIR/
+mv $ACID_DIR $DATABASE_DIR/
+cd $BUILD_ROOT
+tar -cvzf cmangos-classic-database-${CMANGOS_VERSION}.tar.gz database
+cd $DATABASE_DIR/classicdb
+./InstallFullDB.sh
+CONFIGS_DIR="$BUILD_ROOT/configs"
+mkdir -p $CONFIGS_DIR
+cp InstallFullDB.config $CONFIGS_DIR
+cp $CMANGOS_DIR/src/mangosd/mangosd.conf.dist.in $CONFIGS_DIR/mangosd.conf
+cp $CMANGOS_DIR/src/realmd/realmd.conf.dist.in $CONFIGS_DIR/realmd.conf
+cp $CMANGOS_DIR/src/game/AuctionHouseBot/ahbot.conf.dist.in $CONFIGS_DIR/ahbot.conf
+cd $BUILD_ROOT
+tar -cvzf cmangos-classic-configs-${CMANGOS_VERSION}.tar.gz configs
 
-echo "TODO Deploying"
+echo "*******************Deploying**********************"
+$BUILD_ROOT/${DEPLOY_FILE}
 
 exec $@

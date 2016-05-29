@@ -64,7 +64,7 @@ cd $BUILD_ROOT
 tar -cvzf cmangos-classic-${CMANGOS_VERSION}.tar.gz cmangos
 DATABASE_DIR="$BUILD_ROOT/database"
 mkdir -p $DATABASE_DIR
-cp -R $CMANGOS_DIR/sql $DATABASE_DIR/sql
+cp -R $CMANGOS_DIR $DATABASE_DIR/cmangos-classic
 mv $CLASSIC_DB_DIR $DATABASE_DIR/
 mv $ACID_DIR $DATABASE_DIR/
 cd $BUILD_ROOT

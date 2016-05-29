@@ -45,7 +45,9 @@ git reset --hard $COMMIT_ACID
 cd $BUILD_ROOT
 
 CLASSIC_DB_DIR="$BUILD_ROOT/classicdb"
-git clone git://github.com/classicdb/database.git $CLASSIC_DB_DIR
+#git clone git://github.com/classicdb/database.git $CLASSIC_DB_DIR
+# Since i added a way to specify DB_HOST in InstallFullDB.sh i will use my fork and create a pull request...back to main if it is merged.
+git clone git@github.com:maxc0c0s/database.git $CLASSIC_DB_DIR
 cd $CLASSIC_DB_DIR
 git reset --hard $COMMIT_DB
 cd $BUILD_ROOT

@@ -69,11 +69,8 @@ mv $CLASSIC_DB_DIR $DATABASE_DIR/
 mv $ACID_DIR $DATABASE_DIR/
 cd $BUILD_ROOT
 tar -cvzf cmangos-classic-database-${CMANGOS_VERSION}.tar.gz database
-cd $DATABASE_DIR/classicdb
-./InstallFullDB.sh
 CONFIGS_DIR="$BUILD_ROOT/configs"
 mkdir -p $CONFIGS_DIR
-cp InstallFullDB.config $CONFIGS_DIR
 cp $CMANGOS_DIR/src/mangosd/mangosd.conf.dist.in $CONFIGS_DIR/mangosd.conf
 cp $CMANGOS_DIR/src/realmd/realmd.conf.dist.in $CONFIGS_DIR/realmd.conf
 cp $CMANGOS_DIR/src/game/AuctionHouseBot/ahbot.conf.dist.in $CONFIGS_DIR/ahbot.conf

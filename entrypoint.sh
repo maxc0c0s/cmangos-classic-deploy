@@ -5,28 +5,22 @@ BUILD_ROOT="/tmp"
 if [ -z $COMMIT_CMANGOS ]
 then
   echo 'You need to specify the $COMMIT_CMANGOS environment variable, which is the desired cmangos/mangos-classic commit sha.'
-  exit
+  exit 1
 fi
 if [ -z $COMMIT_ACID ]
 then
   echo 'You need to specify the $COMMIT_ACID environment variable, which is the desired ACID-Scripts/Classic commit sha.'
-  exit
+  exit 1
 fi
 if [ -z $COMMIT_DB ]
 then
   echo 'You need to specify the $COMMIT_DB environment variable, which is the desired classicdb/database commit sha.'
-  exit
+  exit 1
 fi
 if [ -z $CMANGOS_VERSION ]
 then
   echo 'You need to specify the $CMANGOS_VERSION environment variable, which is the cmangos/mangos-classic version'
-  exit
-fi
-DEPLOY_FILE="deploy.sh"
-if [ ! -f $BUILD_ROOT/$DEPLOY_FILE ]
-then
-  echo "$DEPLOY_FILE not found"
-  exit
+  exit 1
 fi
 
 echo "******************Compiling*************************"
@@ -79,7 +73,12 @@ cp $CMANGOS_DIR/src/game/AuctionHouseBot/ahbot.conf.dist.in $CONFIGS_DIR/ahbot.c
 cd $BUILD_ROOT
 tar -cvzf cmangos-classic-configs-${CMANGOS_VERSION}.tar.gz configs
 
-echo "*******************Deploying**********************"
-$BUILD_ROOT/${DEPLOY_FILE}
+cd $CUSTOM_SCRIPTS_DIR
+for script in $(ls -A $CUSTOM_SCRIPTS_DIR); do
+  case "$script" in
+    *.sh)  echo "$0: running $script"; . "$script";;
+       *)  echo "$0: ignoring $script";;
+  esac
+done
 
 exec $@

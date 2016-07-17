@@ -1,10 +1,17 @@
-FROM ubuntu:14.04
+FROM maxc0c0s/cmangos-classic-base:latest
+
+ENV CUSTOM_SCRIPTS_DIR=/custom-scripts.d
 
 RUN apt-get update
-RUN apt-get install -y build-essential gcc g++ automake git-core autoconf make patch libmysql++-dev mysql-server libtool libssl-dev grep binutils zlibc libc6 libbz2-dev cmake subversion libboost-all-dev
 
-COPY entrypoint.sh /tmp
+RUN apt-get install -y build-essential gcc g++ automake autoconf make patch mysql-server libtool libssl-dev grep binutils zlibc libc6 libbz2-dev cmake subversion
 
-ONBUILD COPY deploy.sh /tmp
+RUN mkdir -p $CUSTOM_SCRIPTS_DIR
 
-ENTRYPOINT ["/tmp/entrypoint.sh"]
+RUN useradd -r compiler
+
+USER compiler
+
+COPY entrypoint.sh /usr/local/bin
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
